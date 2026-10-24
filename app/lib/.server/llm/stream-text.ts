@@ -1,0 +1,431 @@
+import { streamText as _streamText, type ModelMessage, type UIMessage } from 'ai';
+import { withAgentStreamDeadlines, withAgentToolCallRecovery } from './agent-stream';
+import { MAX_TOKENS, PROVIDER_COMPLETION_LIMITS, isReasoningModel, type FileMap } from './constants';
+import { prepareModelMessages } from './model-messages';
+import { withDevelopmentCommentaryWorkstyle } from './prompt-workstyle';
+import { createFilesContext, extractPropertiesFromMessage } from './utils';
+import { PromptLibrary } from '~/lib/common/prompt-library';
+import { discussPrompt } from '~/lib/common/prompts/discuss-prompt';
+import { getSystemPrompt } from '~/lib/common/prompts/prompts';
+import { LLMManager } from '~/lib/modules/llm/manager';
+import { createMessage, getMessageText } from '~/lib/persistence/messageMigration';
+import type { DesignScheme } from '~/types/design-scheme';
+import type { IProviderSetting } from '~/types/model';
+import { DEFAULT_MODEL, DEFAULT_PROVIDER, MODIFICATIONS_TAG_NAME, PROVIDER_LIST, WORK_DIR } from '~/utils/constants';
+import { createScopedLogger } from '~/utils/logger';
+import { allowedHTMLElements } from '~/utils/markdown';
+
+export type Messages = UIMessage[];
+
+/*
+ * `prompt` and `messages` are mutually exclusive in v7's Prompt type, and
+ * Omit<> is non-distributive over a union, so deriving the whole options type
+ * from Parameters<> collapses that XOR and leaves `prompt` as
+ * `string | ModelMessage[] | undefined`. Subtracting them keeps the long tail
+ * tracking the installed SDK while letting this module own the prompt, which is
+ * the only place that builds it.
+ */
+type DerivedStreamOptions = Omit<
+  Parameters<typeof _streamText>[0],
+  'model' | 'messages' | 'prompt' | 'instructions' | 'system'
+>;
+
+export interface StreamingOptions extends DerivedStreamOptions {
+  messages: ModelMessage[];
+  system?: string;
+  onToolCallRetry?: () => void;
+  supabaseConnection?: {
+    isConnected: boolean;
+    hasSelectedProject: boolean;
+    credentials?: {
+      anonKey?: string;
+      supabaseUrl?: string;
+    };
+  };
+}
+
+const logger = createScopedLogger('stream-text');
+
+function getCompletionTokenLimit(modelDetails: any): number {
+  // 1. If model specifies completion tokens, use that
+  if (modelDetails.maxCompletionTokens && modelDetails.maxCompletionTokens > 0) {
+    return modelDetails.maxCompletionTokens;
+  }
+
+  // 2. Use provider-specific default
+  const providerDefault = PROVIDER_COMPLETION_LIMITS[modelDetails.provider];
+
+  if (providerDefault) {
+    return providerDefault;
+  }
+
+  // 3. Final fallback to MAX_TOKENS, but cap at reasonable limit for safety
+  return Math.min(MAX_TOKENS, 16384);
+}
+
+function sanitizeText(text: string): string {
+  let sanitized = text.replace(/<div class=\\"__boltThought__\\">.*?<\/div>/s, '');
+  sanitized = sanitized.replace(/<think>.*?<\/think>/s, '');
+  sanitized = sanitized.replace(/<boltAction type="file" filePath="package-lock\.json">[\s\S]*?<\/boltAction>/g, '');
+
+  return sanitized.trim();
+}
+
+export async function streamText(props: {
+  messages: Omit<UIMessage, 'id'>[];
+  env?: Env;
+
+  /*
+   * `messages` is excluded because this module builds the prompt itself from
+   * the top-level `messages` prop; callers only supply the remaining options.
+   */
+  options?: Omit<StreamingOptions, 'messages'>;
+  apiKeys?: Record<string, string>;
+  files?: FileMap;
+  providerSettings?: Record<string, IProviderSetting>;
+  model?: string;
+  provider?: string;
+  promptId?: string;
+  contextOptimization?: boolean;
+  contextFiles?: FileMap;
+  summary?: string;
+  messageSliceId?: number;
+  chatMode?: 'discuss' | 'build';
+  agentMode?: boolean;
+  designScheme?: DesignScheme;
+
+  /*
+   * v7 returns a single stream. Callers that used to iterate result.fullStream
+   * alongside the merged UI stream must observe chunks here instead, otherwise
+   * two consumers race for the same stream.
+   */
+  onChunk?: (options: { chunk: unknown }) => void;
+}) {
+  const {
+    messages,
+    env: serverEnv,
+    options,
+    apiKeys,
+    files,
+    providerSettings,
+    promptId,
+    contextOptimization,
+    contextFiles,
+    summary,
+    chatMode,
+    agentMode,
+    designScheme,
+    onChunk,
+  } = props;
+
+  let currentModel = props.model ?? DEFAULT_MODEL;
+  let currentProvider = props.provider ?? DEFAULT_PROVIDER.name;
+
+  let processedMessages = messages.map((message) => {
+    const newMessage = { ...message } as Record<string, any>;
+
+    if (message.role === 'user') {
+      const { model, provider } = extractPropertiesFromMessage(message);
+
+      if (!props.model) {
+        currentModel = model;
+      }
+
+      if (!props.provider) {
+        currentProvider = provider;
+      }
+    }
+
+    /*
+     * Text is rebuilt through createMessage so it lands in both `content` and
+     * `parts`. convertToModelMessages reads only `parts` and dereferences
+     * `message.parts.some(...)` on its first statement, so a message left
+     * without parts is an immediate TypeError rather than a soft degradation.
+     * `data-*` parts are preserved rather than flattened away, because bolt
+     * reads annotations back off them.
+     */
+    const sanitizedParts = Array.isArray(message.parts)
+      ? message.parts.map((part) =>
+          part?.type === 'text' && typeof part.text === 'string' ? { ...part, text: sanitizeText(part.text) } : part,
+        )
+      : [];
+
+    if (sanitizedParts.length > 0) {
+      newMessage.parts = sanitizedParts;
+      newMessage.content = sanitizedParts
+        .filter((part: any) => part?.type === 'text' && typeof part.text === 'string')
+        .map((part: any) => part.text)
+        .join('');
+    } else {
+      const rebuilt = createMessage({
+        role: message.role,
+        text: sanitizeText(getMessageText(message)),
+      });
+
+      newMessage.parts = rebuilt.parts;
+      newMessage.content = rebuilt.content;
+    }
+
+    return newMessage;
+  });
+
+  const provider = PROVIDER_LIST.find((p) => p.name === currentProvider) || DEFAULT_PROVIDER;
+  const staticModels = LLMManager.getInstance().getStaticModelListFromProvider(provider);
+
+  let modelDetails = staticModels.find((m) => m.name === currentModel);
+
+  if (!modelDetails) {
+    const modelsList = [
+      ...(provider.staticModels || []),
+      ...(await LLMManager.getInstance().getModelListFromProvider(provider, {
+        apiKeys,
+        providerSettings,
+        serverEnv: serverEnv as any,
+      })),
+    ];
+
+    if (!modelsList.length) {
+      throw new Error(`No models found for provider ${provider.name}`);
+    }
+
+    modelDetails = modelsList.find((m) => m.name === currentModel);
+
+    if (!modelDetails) {
+      // Check if it's a Google provider and the model name looks like it might be incorrect
+      if (provider.name === 'Google' && currentModel.includes('2.5')) {
+        throw new Error(
+          `Model "${currentModel}" not found. Gemini 2.5 Pro doesn't exist. Available Gemini models include: gemini-1.5-pro, gemini-2.0-flash, gemini-1.5-flash. Please select a valid model.`,
+        );
+      }
+
+      // Fallback to first model with warning
+      logger.warn(
+        `MODEL [${currentModel}] not found in provider [${provider.name}]. Falling back to first model. ${modelsList[0].name}`,
+      );
+      modelDetails = modelsList[0];
+    }
+  }
+
+  const dynamicMaxTokens = modelDetails ? getCompletionTokenLimit(modelDetails) : Math.min(MAX_TOKENS, 16384);
+
+  // Use model-specific limits directly - no artificial cap needed
+  const safeMaxTokens = dynamicMaxTokens;
+
+  logger.info(
+    `Token limits for model ${modelDetails.name}: maxTokens=${safeMaxTokens}, maxTokenAllowed=${modelDetails.maxTokenAllowed}, maxCompletionTokens=${modelDetails.maxCompletionTokens}`,
+  );
+
+  let systemPrompt =
+    PromptLibrary.getPropmtFromLibrary(promptId || 'default', {
+      cwd: WORK_DIR,
+      allowedHtmlElements: allowedHTMLElements,
+      modificationTagName: MODIFICATIONS_TAG_NAME,
+      designScheme,
+      projectTools: chatMode === 'build' && Boolean(options?.prepareStep),
+      supabase: {
+        isConnected: options?.supabaseConnection?.isConnected || false,
+        hasSelectedProject: options?.supabaseConnection?.hasSelectedProject || false,
+        credentials: options?.supabaseConnection?.credentials || undefined,
+      },
+    }) ?? getSystemPrompt();
+
+  // Inject workstyle commentary guidance for build mode
+  if (chatMode === 'build') {
+    systemPrompt = withDevelopmentCommentaryWorkstyle(systemPrompt);
+  }
+
+  if (chatMode === 'build' && agentMode && !options?.prepareStep) {
+    systemPrompt = `${systemPrompt}
+
+<agent_mode_workflow>
+  The user enabled Agent Mode for this build request. Work autonomously through the available project tools, within the request's tool-step limit.
+  - Follow Plan -> edit -> run -> test -> repair. Record a short plan and explicit observable completion criteria with agent_plan, and explain it briefly to the user.
+  - Inspect the relevant project files before editing. For follow-ups, use small exact patches to relevant files and preserve unrelated code; replace entire files only with a concrete reason.
+  - Run the requested app/program, then the smallest relevant available checks. Inspect actual outputs and exit codes. If a check fails, patch its cause and rerun it; edits invalidate earlier passing checks.
+  - Call agent_complete with successful tool evidence for every planned criterion. If blocked or the task limit is reached, clearly state unmet criteria and failed or missing checks.
+  - Do not claim a task or check is complete without tool evidence. Keep the plan focused on the user's request and do not invent extra work.
+</agent_mode_workflow>`;
+  }
+
+  if (chatMode === 'build' && contextFiles && contextOptimization) {
+    const codeContext = createFilesContext(contextFiles, true);
+
+    systemPrompt = `${systemPrompt}
+
+    Below is the artifact containing the context loaded into context buffer for you to have knowledge of and might need changes to fullfill current user request.
+    CONTEXT BUFFER:
+    ---
+    ${codeContext}
+    ---
+    `;
+
+    if (summary) {
+      systemPrompt = `${systemPrompt}
+      below is the chat history till now
+      CHAT SUMMARY:
+      ---
+      ${props.summary}
+      ---
+      `;
+
+      /*
+       * The summary replaces older conversation history. Keep only the recent
+       * turns that the context optimizer selected, while pruning empty parts.
+       * A zero slice ID means no cutoff was selected, so keep only the latest
+       * message because the summary carries the earlier context.
+       */
+      const recentMessages =
+        props.messageSliceId && props.messageSliceId > 0
+          ? processedMessages.slice(props.messageSliceId)
+          : processedMessages.slice(-1);
+      processedMessages = recentMessages;
+    }
+  }
+
+  const effectiveLockedFilePaths = new Set<string>();
+
+  if (files) {
+    for (const [filePath, fileDetails] of Object.entries(files)) {
+      if (fileDetails?.isLocked) {
+        effectiveLockedFilePaths.add(filePath);
+      }
+    }
+  }
+
+  if (effectiveLockedFilePaths.size > 0) {
+    const lockedFilesListString = Array.from(effectiveLockedFilePaths)
+      .map((filePath) => `- ${filePath}`)
+      .join('\n');
+    systemPrompt = `${systemPrompt}
+
+    IMPORTANT: The following files are locked and MUST NOT be modified in any way. Do not suggest or make any changes to these files. You can proceed with the request but DO NOT make any changes to these files specifically:
+    ${lockedFilesListString}
+    ---
+    `;
+  } else {
+    console.log('No locked files found from any source for prompt.');
+  }
+
+  logger.info(`Sending llm call to ${provider.name} with model ${modelDetails.name}`);
+
+  // Log reasoning model detection and token parameters
+  const isReasoning = isReasoningModel(modelDetails.name);
+  logger.info(
+    `Model "${modelDetails.name}" is reasoning model: ${isReasoning}, using ${isReasoning ? 'maxCompletionTokens' : 'maxTokens'}: ${safeMaxTokens}`,
+  );
+
+  // Validate token limits before API call
+  if (safeMaxTokens > (modelDetails.maxTokenAllowed || 128000)) {
+    logger.warn(
+      `Token limit warning: requesting ${safeMaxTokens} tokens but model supports max ${modelDetails.maxTokenAllowed || 128000}`,
+    );
+  }
+
+  const tokenParams = { maxOutputTokens: safeMaxTokens };
+
+  // Filter out unsupported parameters for reasoning models
+  const filteredOptions =
+    isReasoning && options
+      ? Object.fromEntries(
+          Object.entries(options).filter(
+            ([key]) =>
+              ![
+                'temperature',
+                'topP',
+                'presencePenalty',
+                'frequencyPenalty',
+                'logprobs',
+                'topLogprobs',
+                'logitBias',
+              ].includes(key),
+          ),
+        )
+      : options || {};
+
+  // DEBUG: Log filtered options
+  logger.info(
+    `DEBUG STREAM: Options filtering for model "${modelDetails.name}":`,
+    JSON.stringify(
+      {
+        isReasoning,
+        originalOptions: options || {},
+        filteredOptions,
+        originalOptionsKeys: options ? Object.keys(options) : [],
+        filteredOptionsKeys: Object.keys(filteredOptions),
+        removedParams: options ? Object.keys(options).filter((key) => !(key in filteredOptions)) : [],
+      },
+      null,
+      2,
+    ),
+  );
+
+  /*
+   * supabaseConnection is Bolt's own option, not a v7 one. It is consumed above
+   * to build the system prompt, and must not be forwarded, because v7 spreads
+   * unknown keys all the way into the model call where they are silently
+   * ignored. messages is excluded because this module builds the prompt itself.
+   */
+  const {
+    supabaseConnection: _supabaseConnection,
+    messages: _messages,
+    system: additionalSystemInstructions,
+    onToolCallRetry,
+    ...forwardedOptions
+  } = filteredOptions as StreamingOptions & Record<string, unknown>;
+
+  if (provider.name === 'OpenRouter' && forwardedOptions.tools && Object.keys(forwardedOptions.tools).length > 0) {
+    const routing = forwardedOptions.providerOptions?.openrouter?.provider;
+    forwardedOptions.providerOptions = {
+      ...forwardedOptions.providerOptions,
+      openrouter: {
+        ...forwardedOptions.providerOptions?.openrouter,
+        provider: {
+          ...(routing && typeof routing === 'object' && !Array.isArray(routing) ? routing : {}),
+          require_parameters: true,
+        },
+      },
+    };
+  }
+
+  const selectedModel = provider.getModelInstance({
+    model: modelDetails.name,
+    serverEnv,
+    apiKeys,
+    providerSettings,
+  });
+  const boundedModel =
+    forwardedOptions.streamRetries !== undefined ? withAgentStreamDeadlines(selectedModel) : selectedModel;
+  const streamParams = {
+    model: onToolCallRetry ? withAgentToolCallRecovery(boundedModel, onToolCallRetry) : boundedModel,
+    system: [chatMode === 'build' ? systemPrompt : discussPrompt(), additionalSystemInstructions]
+      .filter((instruction): instruction is string => typeof instruction === 'string' && instruction.length > 0)
+      .join('\n\n'),
+    ...tokenParams,
+    messages: await prepareModelMessages(processedMessages as UIMessage[]),
+    ...forwardedOptions,
+
+    ...(onChunk ? { onChunk } : {}),
+
+    // Set temperature to 1 for reasoning models (required by OpenAI API)
+    ...(isReasoning ? { temperature: 1 } : {}),
+  };
+
+  // DEBUG: Log final streaming parameters
+  logger.info(
+    `DEBUG STREAM: Final streaming params for model "${modelDetails.name}":`,
+    JSON.stringify(
+      {
+        hasTemperature: 'temperature' in streamParams,
+        hasMaxOutputTokens: 'maxOutputTokens' in streamParams,
+        paramKeys: Object.keys(streamParams).filter((key) => !['model', 'messages', 'system'].includes(key)),
+        streamParams: Object.fromEntries(
+          Object.entries(streamParams).filter(([key]) => !['model', 'messages', 'system'].includes(key)),
+        ),
+      },
+      null,
+      2,
+    ),
+  );
+
+  return await _streamText(streamParams);
+}

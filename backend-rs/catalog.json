@@ -1,0 +1,1130 @@
+{
+  "providers": [
+    {
+      "name": "AmazonBedrock",
+      "staticModels": [
+        {
+          "name": "amazon.nova-pro-v1:0",
+          "label": "Amazon Nova Pro (Bedrock)",
+          "provider": "AmazonBedrock",
+          "maxTokenAllowed": 5120
+        },
+        {
+          "name": "amazon.nova-lite-v1:0",
+          "label": "Amazon Nova Lite (Bedrock)",
+          "provider": "AmazonBedrock",
+          "maxTokenAllowed": 5120
+        },
+        {
+          "name": "mistral.mistral-large-2402-v1:0",
+          "label": "Mistral Large 24.02 (Bedrock)",
+          "provider": "AmazonBedrock",
+          "maxTokenAllowed": 8192
+        }
+      ],
+      "getApiKeyLink": "https://console.aws.amazon.com/iam/home",
+      "labelForGetApiKey": null,
+      "icon": null,
+      "config": {
+        "baseUrlKey": null,
+        "apiTokenKey": "AWS_BEDROCK_CONFIG",
+        "baseUrl": null
+      },
+      "hasDynamicModels": false
+    },
+    {
+      "name": "Cerebras",
+      "staticModels": [
+        {
+          "name": "qwen3-coder-480b",
+          "label": "Qwen3-Coder 480B (2000 tok/s, Best for Coding)",
+          "provider": "Cerebras",
+          "maxTokenAllowed": 262000
+        },
+        {
+          "name": "llama3.1-8b",
+          "label": "Llama 3.1 8B",
+          "provider": "Cerebras",
+          "maxTokenAllowed": 8000
+        },
+        {
+          "name": "gpt-oss-120b",
+          "label": "GPT OSS 120B (Reasoning)",
+          "provider": "Cerebras",
+          "maxTokenAllowed": 8000
+        },
+        {
+          "name": "qwen-3-235b-a22b-instruct-2507",
+          "label": "Qwen 3 235B A22B Instruct",
+          "provider": "Cerebras",
+          "maxTokenAllowed": 8000
+        },
+        {
+          "name": "qwen-3-235b-a22b-thinking-2507",
+          "label": "Qwen 3 235B A22B Thinking",
+          "provider": "Cerebras",
+          "maxTokenAllowed": 8000
+        },
+        {
+          "name": "zai-glm-4.6",
+          "label": "ZAI GLM 4.6 (Coding: 73.8% SWE-bench)",
+          "provider": "Cerebras",
+          "maxTokenAllowed": 8000
+        },
+        {
+          "name": "zai-glm-4.7",
+          "label": "ZAI GLM 4.7 (Reasoning)",
+          "provider": "Cerebras",
+          "maxTokenAllowed": 8000
+        }
+      ],
+      "getApiKeyLink": "https://cloud.cerebras.ai/settings",
+      "labelForGetApiKey": null,
+      "icon": null,
+      "config": {
+        "baseUrlKey": null,
+        "apiTokenKey": "CEREBRAS_API_KEY",
+        "baseUrl": null
+      },
+      "hasDynamicModels": true
+    },
+    {
+      "name": "CodeGPT",
+      "staticModels": [],
+      "getApiKeyLink": "https://app.codegpt.co",
+      "labelForGetApiKey": "CodeGPT Login",
+      "icon": null,
+      "config": {
+        "baseUrlKey": "CODEGPT_BACKEND_URL",
+        "apiTokenKey": "CODEGPT_SESSION_TOKEN",
+        "baseUrl": "https://api.codegpt.co/api/v1"
+      },
+      "hasDynamicModels": true
+    },
+    {
+      "name": "Cohere",
+      "staticModels": [
+        {
+          "name": "command-r-plus-08-2024",
+          "label": "Command R plus Latest",
+          "provider": "Cohere",
+          "maxTokenAllowed": 4096,
+          "maxCompletionTokens": 4000
+        },
+        {
+          "name": "command-r-08-2024",
+          "label": "Command R Latest",
+          "provider": "Cohere",
+          "maxTokenAllowed": 4096,
+          "maxCompletionTokens": 4000
+        },
+        {
+          "name": "command-r-plus",
+          "label": "Command R plus",
+          "provider": "Cohere",
+          "maxTokenAllowed": 4096,
+          "maxCompletionTokens": 4000
+        },
+        {
+          "name": "command-r",
+          "label": "Command R",
+          "provider": "Cohere",
+          "maxTokenAllowed": 4096,
+          "maxCompletionTokens": 4000
+        },
+        {
+          "name": "command",
+          "label": "Command",
+          "provider": "Cohere",
+          "maxTokenAllowed": 4096,
+          "maxCompletionTokens": 4000
+        },
+        {
+          "name": "command-nightly",
+          "label": "Command Nightly",
+          "provider": "Cohere",
+          "maxTokenAllowed": 4096,
+          "maxCompletionTokens": 4000
+        },
+        {
+          "name": "command-light",
+          "label": "Command Light",
+          "provider": "Cohere",
+          "maxTokenAllowed": 4096,
+          "maxCompletionTokens": 4000
+        },
+        {
+          "name": "command-light-nightly",
+          "label": "Command Light Nightly",
+          "provider": "Cohere",
+          "maxTokenAllowed": 4096,
+          "maxCompletionTokens": 4000
+        },
+        {
+          "name": "c4ai-aya-expanse-8b",
+          "label": "c4AI Aya Expanse 8b",
+          "provider": "Cohere",
+          "maxTokenAllowed": 4096,
+          "maxCompletionTokens": 4000
+        },
+        {
+          "name": "c4ai-aya-expanse-32b",
+          "label": "c4AI Aya Expanse 32b",
+          "provider": "Cohere",
+          "maxTokenAllowed": 4096,
+          "maxCompletionTokens": 4000
+        }
+      ],
+      "getApiKeyLink": "https://dashboard.cohere.com/api-keys",
+      "labelForGetApiKey": null,
+      "icon": null,
+      "config": {
+        "baseUrlKey": null,
+        "apiTokenKey": "COHERE_API_KEY",
+        "baseUrl": null
+      },
+      "hasDynamicModels": false
+    },
+    {
+      "name": "Deepseek",
+      "staticModels": [
+        {
+          "name": "deepseek-v4-pro",
+          "label": "DeepSeek V4 Pro",
+          "provider": "Deepseek",
+          "maxTokenAllowed": 1000000,
+          "maxCompletionTokens": 384000
+        },
+        {
+          "name": "deepseek-v4-flash",
+          "label": "DeepSeek V4 Flash",
+          "provider": "Deepseek",
+          "maxTokenAllowed": 1000000,
+          "maxCompletionTokens": 384000
+        },
+        {
+          "name": "deepseek-coder",
+          "label": "Deepseek-Coder",
+          "provider": "Deepseek",
+          "maxTokenAllowed": 8000,
+          "maxCompletionTokens": 8192
+        },
+        {
+          "name": "deepseek-chat",
+          "label": "Deepseek-Chat",
+          "provider": "Deepseek",
+          "maxTokenAllowed": 8000,
+          "maxCompletionTokens": 8192
+        },
+        {
+          "name": "deepseek-reasoner",
+          "label": "Deepseek-Reasoner",
+          "provider": "Deepseek",
+          "maxTokenAllowed": 8000,
+          "maxCompletionTokens": 8192
+        },
+        {
+          "name": "deepseek-v3.2",
+          "label": "DeepSeek V3.2 (Coding + Tool Use)",
+          "provider": "Deepseek",
+          "maxTokenAllowed": 64000,
+          "maxCompletionTokens": 8192
+        },
+        {
+          "name": "deepseek-v3.2-speciale",
+          "label": "DeepSeek V3.2 Speciale (High-Compute)",
+          "provider": "Deepseek",
+          "maxTokenAllowed": 64000,
+          "maxCompletionTokens": 8192
+        }
+      ],
+      "getApiKeyLink": "https://platform.deepseek.com/apiKeys",
+      "labelForGetApiKey": null,
+      "icon": null,
+      "config": {
+        "baseUrlKey": null,
+        "apiTokenKey": "DEEPSEEK_API_KEY",
+        "baseUrl": null
+      },
+      "hasDynamicModels": true
+    },
+    {
+      "name": "Fireworks",
+      "staticModels": [
+        {
+          "name": "accounts/fireworks/models/qwen3-coder-480b-a35b-instruct",
+          "label": "Qwen3-Coder 480B (Best for Coding)",
+          "provider": "Fireworks",
+          "maxTokenAllowed": 262000
+        },
+        {
+          "name": "accounts/fireworks/models/qwen3-coder-30b-a3b-instruct",
+          "label": "Qwen3-Coder 30B (Fast Coding)",
+          "provider": "Fireworks",
+          "maxTokenAllowed": 262000
+        },
+        {
+          "name": "accounts/fireworks/models/llama-v3p1-405b-instruct",
+          "label": "Llama 3.1 405B Instruct",
+          "provider": "Fireworks",
+          "maxTokenAllowed": 128000
+        },
+        {
+          "name": "accounts/fireworks/models/llama-v3p1-70b-instruct",
+          "label": "Llama 3.1 70B Instruct",
+          "provider": "Fireworks",
+          "maxTokenAllowed": 128000
+        },
+        {
+          "name": "accounts/fireworks/models/llama-v3p1-8b-instruct",
+          "label": "Llama 3.1 8B Instruct",
+          "provider": "Fireworks",
+          "maxTokenAllowed": 128000
+        },
+        {
+          "name": "accounts/fireworks/models/deepseek-r1",
+          "label": "DeepSeek R1 (Reasoning)",
+          "provider": "Fireworks",
+          "maxTokenAllowed": 64000
+        },
+        {
+          "name": "accounts/fireworks/models/qwen2p5-72b-instruct",
+          "label": "Qwen 2.5 72B Instruct",
+          "provider": "Fireworks",
+          "maxTokenAllowed": 128000
+        },
+        {
+          "name": "accounts/fireworks/models/firefunction-v2",
+          "label": "FireFunction V2",
+          "provider": "Fireworks",
+          "maxTokenAllowed": 8000
+        }
+      ],
+      "getApiKeyLink": "https://fireworks.ai/api-keys",
+      "labelForGetApiKey": null,
+      "icon": null,
+      "config": {
+        "baseUrlKey": null,
+        "apiTokenKey": "FIREWORKS_API_KEY",
+        "baseUrl": null
+      },
+      "hasDynamicModels": true
+    },
+    {
+      "name": "Github",
+      "staticModels": [
+        {
+          "name": "openai/gpt-4o",
+          "label": "GPT-4o",
+          "provider": "Github",
+          "maxTokenAllowed": 131072,
+          "maxCompletionTokens": 4096
+        },
+        {
+          "name": "openai/gpt-4o-mini",
+          "label": "GPT-4o Mini",
+          "provider": "Github",
+          "maxTokenAllowed": 131072,
+          "maxCompletionTokens": 4096
+        },
+        {
+          "name": "openai/o1-preview",
+          "label": "o1-preview",
+          "provider": "Github",
+          "maxTokenAllowed": 128000,
+          "maxCompletionTokens": 32000
+        },
+        {
+          "name": "openai/o1-mini",
+          "label": "o1-mini",
+          "provider": "Github",
+          "maxTokenAllowed": 128000,
+          "maxCompletionTokens": 65000
+        },
+        {
+          "name": "openai/o1",
+          "label": "o1",
+          "provider": "Github",
+          "maxTokenAllowed": 200000,
+          "maxCompletionTokens": 100000
+        },
+        {
+          "name": "openai/gpt-4.1",
+          "label": "GPT-4.1",
+          "provider": "Github",
+          "maxTokenAllowed": 1048576,
+          "maxCompletionTokens": 32768
+        },
+        {
+          "name": "openai/gpt-4.1-mini",
+          "label": "GPT-4.1-mini",
+          "provider": "Github",
+          "maxTokenAllowed": 1048576,
+          "maxCompletionTokens": 32768
+        },
+        {
+          "name": "deepseek/deepseek-r1",
+          "label": "DeepSeek-R1",
+          "provider": "Github",
+          "maxTokenAllowed": 128000,
+          "maxCompletionTokens": 4096
+        }
+      ],
+      "getApiKeyLink": "https://github.com/settings/personal-access-tokens",
+      "labelForGetApiKey": null,
+      "icon": null,
+      "config": {
+        "baseUrlKey": null,
+        "apiTokenKey": "GITHUB_API_KEY",
+        "baseUrl": null
+      },
+      "hasDynamicModels": true
+    },
+    {
+      "name": "Google",
+      "staticModels": [
+        {
+          "name": "gemini-3.1-pro-preview",
+          "label": "Gemini 3.1 Pro Preview",
+          "provider": "Google",
+          "maxTokenAllowed": 1048576,
+          "maxCompletionTokens": 65536
+        },
+        {
+          "name": "gemini-3.5-flash",
+          "label": "Gemini 3.5 Flash",
+          "provider": "Google",
+          "maxTokenAllowed": 1048576,
+          "maxCompletionTokens": 65536
+        },
+        {
+          "name": "gemini-3-flash-preview",
+          "label": "Gemini 3 Flash Preview",
+          "provider": "Google",
+          "maxTokenAllowed": 1048576,
+          "maxCompletionTokens": 65536
+        },
+        {
+          "name": "gemini-2.5-pro",
+          "label": "Gemini 2.5 Pro",
+          "provider": "Google",
+          "maxTokenAllowed": 1048576,
+          "maxCompletionTokens": 65536
+        },
+        {
+          "name": "gemini-2.5-flash",
+          "label": "Gemini 2.5 Flash",
+          "provider": "Google",
+          "maxTokenAllowed": 1048576,
+          "maxCompletionTokens": 65536
+        },
+        {
+          "name": "gemini-2.5-flash-lite",
+          "label": "Gemini 2.5 Flash-Lite",
+          "provider": "Google",
+          "maxTokenAllowed": 1048576,
+          "maxCompletionTokens": 65536
+        },
+        {
+          "name": "gemini-1.5-pro",
+          "label": "Gemini 1.5 Pro",
+          "provider": "Google",
+          "maxTokenAllowed": 2000000,
+          "maxCompletionTokens": 8192
+        },
+        {
+          "name": "gemini-1.5-flash",
+          "label": "Gemini 1.5 Flash",
+          "provider": "Google",
+          "maxTokenAllowed": 1000000,
+          "maxCompletionTokens": 8192
+        }
+      ],
+      "getApiKeyLink": "https://aistudio.google.com/app/apikey",
+      "labelForGetApiKey": null,
+      "icon": null,
+      "config": {
+        "baseUrlKey": null,
+        "apiTokenKey": "GOOGLE_GENERATIVE_AI_API_KEY",
+        "baseUrl": null
+      },
+      "hasDynamicModels": true
+    },
+    {
+      "name": "Groq",
+      "staticModels": [
+        {
+          "name": "llama-3.1-8b-instant",
+          "label": "Llama 3.1 8B",
+          "provider": "Groq",
+          "maxTokenAllowed": 128000,
+          "maxCompletionTokens": 8192
+        },
+        {
+          "name": "llama-3.3-70b-versatile",
+          "label": "Llama 3.3 70B",
+          "provider": "Groq",
+          "maxTokenAllowed": 128000,
+          "maxCompletionTokens": 8192
+        },
+        {
+          "name": "openai/gpt-oss-120b",
+          "label": "GPT-OSS 120B",
+          "provider": "Groq",
+          "maxTokenAllowed": 131072,
+          "maxCompletionTokens": 65536
+        },
+        {
+          "name": "openai/gpt-oss-20b",
+          "label": "GPT-OSS 20B",
+          "provider": "Groq",
+          "maxTokenAllowed": 131072,
+          "maxCompletionTokens": 65536
+        },
+        {
+          "name": "groq/compound",
+          "label": "Groq Compound",
+          "provider": "Groq",
+          "maxTokenAllowed": 131072,
+          "maxCompletionTokens": 65536
+        },
+        {
+          "name": "groq/compound-mini",
+          "label": "Groq Compound Mini",
+          "provider": "Groq",
+          "maxTokenAllowed": 131072,
+          "maxCompletionTokens": 65536
+        },
+        {
+          "name": "qwen/qwen3-32b",
+          "label": "Qwen3 32B",
+          "provider": "Groq",
+          "maxTokenAllowed": 131072,
+          "maxCompletionTokens": 65536
+        },
+        {
+          "name": "qwen/qwen3.6-27b",
+          "label": "Qwen3.6 27B",
+          "provider": "Groq",
+          "maxTokenAllowed": 131072,
+          "maxCompletionTokens": 65536
+        }
+      ],
+      "getApiKeyLink": "https://console.groq.com/keys",
+      "labelForGetApiKey": null,
+      "icon": null,
+      "config": {
+        "baseUrlKey": null,
+        "apiTokenKey": "GROQ_API_KEY",
+        "baseUrl": null
+      },
+      "hasDynamicModels": true
+    },
+    {
+      "name": "HuggingFace",
+      "staticModels": [
+        {
+          "name": "Qwen/Qwen2.5-Coder-32B-Instruct",
+          "label": "Qwen2.5-Coder-32B-Instruct (HuggingFace)",
+          "provider": "HuggingFace",
+          "maxTokenAllowed": 8000
+        },
+        {
+          "name": "01-ai/Yi-1.5-34B-Chat",
+          "label": "Yi-1.5-34B-Chat (HuggingFace)",
+          "provider": "HuggingFace",
+          "maxTokenAllowed": 8000
+        },
+        {
+          "name": "codellama/CodeLlama-34b-Instruct-hf",
+          "label": "CodeLlama-34b-Instruct (HuggingFace)",
+          "provider": "HuggingFace",
+          "maxTokenAllowed": 8000
+        },
+        {
+          "name": "NousResearch/Hermes-3-Llama-3.1-8B",
+          "label": "Hermes-3-Llama-3.1-8B (HuggingFace)",
+          "provider": "HuggingFace",
+          "maxTokenAllowed": 8000
+        },
+        {
+          "name": "Qwen/Qwen2.5-Coder-32B-Instruct",
+          "label": "Qwen2.5-Coder-32B-Instruct (HuggingFace)",
+          "provider": "HuggingFace",
+          "maxTokenAllowed": 8000
+        },
+        {
+          "name": "Qwen/Qwen2.5-72B-Instruct",
+          "label": "Qwen2.5-72B-Instruct (HuggingFace)",
+          "provider": "HuggingFace",
+          "maxTokenAllowed": 8000
+        },
+        {
+          "name": "meta-llama/Llama-3.1-70B-Instruct",
+          "label": "Llama-3.1-70B-Instruct (HuggingFace)",
+          "provider": "HuggingFace",
+          "maxTokenAllowed": 8000
+        },
+        {
+          "name": "meta-llama/Llama-3.1-405B",
+          "label": "Llama-3.1-405B (HuggingFace)",
+          "provider": "HuggingFace",
+          "maxTokenAllowed": 8000
+        },
+        {
+          "name": "01-ai/Yi-1.5-34B-Chat",
+          "label": "Yi-1.5-34B-Chat (HuggingFace)",
+          "provider": "HuggingFace",
+          "maxTokenAllowed": 8000
+        },
+        {
+          "name": "codellama/CodeLlama-34b-Instruct-hf",
+          "label": "CodeLlama-34b-Instruct (HuggingFace)",
+          "provider": "HuggingFace",
+          "maxTokenAllowed": 8000
+        },
+        {
+          "name": "NousResearch/Hermes-3-Llama-3.1-8B",
+          "label": "Hermes-3-Llama-3.1-8B (HuggingFace)",
+          "provider": "HuggingFace",
+          "maxTokenAllowed": 8000
+        }
+      ],
+      "getApiKeyLink": "https://huggingface.co/settings/tokens",
+      "labelForGetApiKey": null,
+      "icon": null,
+      "config": {
+        "baseUrlKey": null,
+        "apiTokenKey": "HuggingFace_API_KEY",
+        "baseUrl": null
+      },
+      "hasDynamicModels": false
+    },
+    {
+      "name": "Hyperbolic",
+      "staticModels": [
+        {
+          "name": "Qwen/Qwen2.5-Coder-32B-Instruct",
+          "label": "Qwen 2.5 Coder 32B Instruct",
+          "provider": "Hyperbolic",
+          "maxTokenAllowed": 8192
+        },
+        {
+          "name": "Qwen/Qwen2.5-72B-Instruct",
+          "label": "Qwen2.5-72B-Instruct",
+          "provider": "Hyperbolic",
+          "maxTokenAllowed": 8192
+        },
+        {
+          "name": "deepseek-ai/DeepSeek-V2.5",
+          "label": "DeepSeek-V2.5",
+          "provider": "Hyperbolic",
+          "maxTokenAllowed": 8192
+        },
+        {
+          "name": "Qwen/QwQ-32B-Preview",
+          "label": "QwQ-32B-Preview",
+          "provider": "Hyperbolic",
+          "maxTokenAllowed": 8192
+        },
+        {
+          "name": "Qwen/Qwen2-VL-72B-Instruct",
+          "label": "Qwen2-VL-72B-Instruct",
+          "provider": "Hyperbolic",
+          "maxTokenAllowed": 8192
+        }
+      ],
+      "getApiKeyLink": "https://app.hyperbolic.xyz/settings",
+      "labelForGetApiKey": null,
+      "icon": null,
+      "config": {
+        "baseUrlKey": null,
+        "apiTokenKey": "HYPERBOLIC_API_KEY",
+        "baseUrl": null
+      },
+      "hasDynamicModels": true
+    },
+    {
+      "name": "LMStudio",
+      "staticModels": [],
+      "getApiKeyLink": "https://lmstudio.ai/",
+      "labelForGetApiKey": "Get LMStudio",
+      "icon": "i-ph:cloud-arrow-down",
+      "config": {
+        "baseUrlKey": "LMSTUDIO_API_BASE_URL",
+        "apiTokenKey": null,
+        "baseUrl": "http://localhost:1234/"
+      },
+      "hasDynamicModels": true
+    },
+    {
+      "name": "Mistral",
+      "staticModels": [
+        {
+          "name": "mistral-medium-latest",
+          "label": "Mistral Medium 3.5",
+          "provider": "Mistral",
+          "maxTokenAllowed": 128000,
+          "maxCompletionTokens": 32768
+        },
+        {
+          "name": "mistral-small-latest",
+          "label": "Mistral Small 4",
+          "provider": "Mistral",
+          "maxTokenAllowed": 128000,
+          "maxCompletionTokens": 32768
+        },
+        {
+          "name": "codestral-latest",
+          "label": "Codestral Premier",
+          "provider": "Mistral",
+          "maxTokenAllowed": 256000,
+          "maxCompletionTokens": 32768
+        },
+        {
+          "name": "mistral-large-latest",
+          "label": "Mistral Large Latest",
+          "provider": "Mistral",
+          "maxTokenAllowed": 128000,
+          "maxCompletionTokens": 32768
+        },
+        {
+          "name": "open-mistral-7b",
+          "label": "Mistral 7B",
+          "provider": "Mistral",
+          "maxTokenAllowed": 32000,
+          "maxCompletionTokens": 8192
+        },
+        {
+          "name": "open-mixtral-8x7b",
+          "label": "Mistral 8x7B",
+          "provider": "Mistral",
+          "maxTokenAllowed": 32000,
+          "maxCompletionTokens": 8192
+        },
+        {
+          "name": "open-mixtral-8x22b",
+          "label": "Mistral 8x22B",
+          "provider": "Mistral",
+          "maxTokenAllowed": 64000,
+          "maxCompletionTokens": 8192
+        },
+        {
+          "name": "open-codestral-mamba",
+          "label": "Codestral Mamba",
+          "provider": "Mistral",
+          "maxTokenAllowed": 256000,
+          "maxCompletionTokens": 8192
+        },
+        {
+          "name": "open-mistral-nemo",
+          "label": "Mistral Nemo",
+          "provider": "Mistral",
+          "maxTokenAllowed": 128000,
+          "maxCompletionTokens": 8192
+        },
+        {
+          "name": "ministral-8b-latest",
+          "label": "Mistral 8B",
+          "provider": "Mistral",
+          "maxTokenAllowed": 128000,
+          "maxCompletionTokens": 8192
+        }
+      ],
+      "getApiKeyLink": "https://console.mistral.ai/api-keys/",
+      "labelForGetApiKey": null,
+      "icon": null,
+      "config": {
+        "baseUrlKey": null,
+        "apiTokenKey": "MISTRAL_API_KEY",
+        "baseUrl": null
+      },
+      "hasDynamicModels": false
+    },
+    {
+      "name": "Moonshot",
+      "staticModels": [
+        {
+          "name": "moonshot-v1-8k",
+          "label": "Moonshot v1 8K",
+          "provider": "Moonshot",
+          "maxTokenAllowed": 8000
+        },
+        {
+          "name": "moonshot-v1-32k",
+          "label": "Moonshot v1 32K",
+          "provider": "Moonshot",
+          "maxTokenAllowed": 32000
+        },
+        {
+          "name": "moonshot-v1-128k",
+          "label": "Moonshot v1 128K",
+          "provider": "Moonshot",
+          "maxTokenAllowed": 128000
+        },
+        {
+          "name": "moonshot-v1-auto",
+          "label": "Moonshot v1 Auto",
+          "provider": "Moonshot",
+          "maxTokenAllowed": 128000
+        },
+        {
+          "name": "moonshot-v1-8k-vision-preview",
+          "label": "Moonshot v1 8K Vision",
+          "provider": "Moonshot",
+          "maxTokenAllowed": 8000
+        },
+        {
+          "name": "moonshot-v1-32k-vision-preview",
+          "label": "Moonshot v1 32K Vision",
+          "provider": "Moonshot",
+          "maxTokenAllowed": 32000
+        },
+        {
+          "name": "moonshot-v1-128k-vision-preview",
+          "label": "Moonshot v1 128K Vision",
+          "provider": "Moonshot",
+          "maxTokenAllowed": 128000
+        },
+        {
+          "name": "kimi-latest",
+          "label": "Kimi Latest",
+          "provider": "Moonshot",
+          "maxTokenAllowed": 128000
+        },
+        {
+          "name": "kimi-k2-0711-preview",
+          "label": "Kimi K2 Preview",
+          "provider": "Moonshot",
+          "maxTokenAllowed": 128000
+        },
+        {
+          "name": "kimi-k2-turbo-preview",
+          "label": "Kimi K2 Turbo",
+          "provider": "Moonshot",
+          "maxTokenAllowed": 128000
+        },
+        {
+          "name": "kimi-thinking-preview",
+          "label": "Kimi Thinking",
+          "provider": "Moonshot",
+          "maxTokenAllowed": 128000
+        }
+      ],
+      "getApiKeyLink": "https://platform.moonshot.ai/console/api-keys",
+      "labelForGetApiKey": null,
+      "icon": null,
+      "config": {
+        "baseUrlKey": null,
+        "apiTokenKey": "MOONSHOT_API_KEY",
+        "baseUrl": null
+      },
+      "hasDynamicModels": true
+    },
+    {
+      "name": "Ollama",
+      "staticModels": [],
+      "getApiKeyLink": "https://ollama.com/download",
+      "labelForGetApiKey": "Download Ollama",
+      "icon": "i-ph:cloud-arrow-down",
+      "config": {
+        "baseUrlKey": "OLLAMA_API_BASE_URL",
+        "apiTokenKey": null,
+        "baseUrl": null
+      },
+      "hasDynamicModels": true
+    },
+    {
+      "name": "OpenAILike",
+      "staticModels": [],
+      "getApiKeyLink": null,
+      "labelForGetApiKey": null,
+      "icon": null,
+      "config": {
+        "baseUrlKey": "OPENAI_LIKE_API_BASE_URL",
+        "apiTokenKey": "OPENAI_LIKE_API_KEY",
+        "baseUrl": null
+      },
+      "hasDynamicModels": true
+    },
+    {
+      "name": "OpenAI",
+      "staticModels": [
+        {
+          "name": "gpt-5.5",
+          "label": "GPT-5.5",
+          "provider": "OpenAI",
+          "maxTokenAllowed": 1000000,
+          "maxCompletionTokens": 128000
+        },
+        {
+          "name": "gpt-5.5-pro",
+          "label": "GPT-5.5 Pro",
+          "provider": "OpenAI",
+          "maxTokenAllowed": 1000000,
+          "maxCompletionTokens": 128000
+        },
+        {
+          "name": "gpt-5.4",
+          "label": "GPT-5.4",
+          "provider": "OpenAI",
+          "maxTokenAllowed": 1000000,
+          "maxCompletionTokens": 128000
+        },
+        {
+          "name": "gpt-5.4-pro",
+          "label": "GPT-5.4 Pro",
+          "provider": "OpenAI",
+          "maxTokenAllowed": 1000000,
+          "maxCompletionTokens": 128000
+        },
+        {
+          "name": "gpt-5.4-mini",
+          "label": "GPT-5.4 Mini",
+          "provider": "OpenAI",
+          "maxTokenAllowed": 400000,
+          "maxCompletionTokens": 128000
+        },
+        {
+          "name": "gpt-5.4-nano",
+          "label": "GPT-5.4 Nano",
+          "provider": "OpenAI",
+          "maxTokenAllowed": 400000,
+          "maxCompletionTokens": 128000
+        },
+        {
+          "name": "gpt-5.3-codex",
+          "label": "GPT-5.3 Codex",
+          "provider": "OpenAI",
+          "maxTokenAllowed": 400000,
+          "maxCompletionTokens": 128000
+        },
+        {
+          "name": "gpt-4o",
+          "label": "GPT-4o",
+          "provider": "OpenAI",
+          "maxTokenAllowed": 128000,
+          "maxCompletionTokens": 4096
+        },
+        {
+          "name": "gpt-4o-mini",
+          "label": "GPT-4o Mini",
+          "provider": "OpenAI",
+          "maxTokenAllowed": 128000,
+          "maxCompletionTokens": 4096
+        },
+        {
+          "name": "gpt-3.5-turbo",
+          "label": "GPT-3.5 Turbo",
+          "provider": "OpenAI",
+          "maxTokenAllowed": 16000,
+          "maxCompletionTokens": 4096
+        },
+        {
+          "name": "o1-preview",
+          "label": "o1-preview",
+          "provider": "OpenAI",
+          "maxTokenAllowed": 128000,
+          "maxCompletionTokens": 32000
+        },
+        {
+          "name": "o1-mini",
+          "label": "o1-mini",
+          "provider": "OpenAI",
+          "maxTokenAllowed": 128000,
+          "maxCompletionTokens": 65000
+        }
+      ],
+      "getApiKeyLink": "https://platform.openai.com/api-keys",
+      "labelForGetApiKey": null,
+      "icon": null,
+      "config": {
+        "baseUrlKey": null,
+        "apiTokenKey": "OPENAI_API_KEY",
+        "baseUrl": null
+      },
+      "hasDynamicModels": true
+    },
+    {
+      "name": "OpenRouter",
+      "staticModels": [
+        {
+          "name": "z-ai/glm-5.3-flash",
+          "label": "GLM 5.3 Flash",
+          "provider": "OpenRouter",
+          "maxTokenAllowed": 1310720,
+          "maxCompletionTokens": 16384
+        },
+        {
+          "name": "openai/gpt-4o",
+          "label": "GPT-4o",
+          "provider": "OpenRouter",
+          "maxTokenAllowed": 128000
+        }
+      ],
+      "getApiKeyLink": "https://openrouter.ai/settings/keys",
+      "labelForGetApiKey": null,
+      "icon": null,
+      "config": {
+        "baseUrlKey": null,
+        "apiTokenKey": "OPEN_ROUTER_API_KEY",
+        "baseUrl": null
+      },
+      "hasDynamicModels": true
+    },
+    {
+      "name": "Perplexity",
+      "staticModels": [
+        {
+          "name": "sonar",
+          "label": "Sonar",
+          "provider": "Perplexity",
+          "maxTokenAllowed": 8192
+        },
+        {
+          "name": "sonar-pro",
+          "label": "Sonar Pro",
+          "provider": "Perplexity",
+          "maxTokenAllowed": 8192
+        },
+        {
+          "name": "sonar-reasoning-pro",
+          "label": "Sonar Reasoning Pro",
+          "provider": "Perplexity",
+          "maxTokenAllowed": 8192
+        }
+      ],
+      "getApiKeyLink": "https://www.perplexity.ai/settings/api",
+      "labelForGetApiKey": null,
+      "icon": null,
+      "config": {
+        "baseUrlKey": null,
+        "apiTokenKey": "PERPLEXITY_API_KEY",
+        "baseUrl": null
+      },
+      "hasDynamicModels": false
+    },
+    {
+      "name": "Together",
+      "staticModels": [
+        {
+          "name": "meta-llama/Llama-3.2-90B-Vision-Instruct-Turbo",
+          "label": "Llama 3.2 90B Vision",
+          "provider": "Together",
+          "maxTokenAllowed": 128000,
+          "maxCompletionTokens": 8192
+        },
+        {
+          "name": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+          "label": "Mixtral 8x7B Instruct",
+          "provider": "Together",
+          "maxTokenAllowed": 32000,
+          "maxCompletionTokens": 8192
+        }
+      ],
+      "getApiKeyLink": "https://api.together.xyz/settings/api-keys",
+      "labelForGetApiKey": null,
+      "icon": null,
+      "config": {
+        "baseUrlKey": "TOGETHER_API_BASE_URL",
+        "apiTokenKey": "TOGETHER_API_KEY",
+        "baseUrl": null
+      },
+      "hasDynamicModels": true
+    },
+    {
+      "name": "xAI",
+      "staticModels": [
+        {
+          "name": "grok-4.3",
+          "label": "xAI Grok 4.3",
+          "provider": "xAI",
+          "maxTokenAllowed": 256000,
+          "maxCompletionTokens": 65536
+        },
+        {
+          "name": "grok-build-0.1",
+          "label": "xAI Grok Build 0.1",
+          "provider": "xAI",
+          "maxTokenAllowed": 256000,
+          "maxCompletionTokens": 65536
+        },
+        {
+          "name": "grok-code-fast-1",
+          "label": "xAI Grok Code Fast 1",
+          "provider": "xAI",
+          "maxTokenAllowed": 131000,
+          "maxCompletionTokens": 32768
+        },
+        {
+          "name": "grok-4",
+          "label": "xAI Grok 4",
+          "provider": "xAI",
+          "maxTokenAllowed": 256000
+        },
+        {
+          "name": "grok-4-07-09",
+          "label": "xAI Grok 4 (07-09)",
+          "provider": "xAI",
+          "maxTokenAllowed": 256000
+        },
+        {
+          "name": "grok-3-mini",
+          "label": "xAI Grok 3 Mini",
+          "provider": "xAI",
+          "maxTokenAllowed": 131000
+        },
+        {
+          "name": "grok-3-mini-fast",
+          "label": "xAI Grok 3 Mini Fast",
+          "provider": "xAI",
+          "maxTokenAllowed": 131000
+        }
+      ],
+      "getApiKeyLink": "https://docs.x.ai/docs/quickstart#creating-an-api-key",
+      "labelForGetApiKey": null,
+      "icon": null,
+      "config": {
+        "baseUrlKey": null,
+        "apiTokenKey": "XAI_API_KEY",
+        "baseUrl": null
+      },
+      "hasDynamicModels": false
+    },
+    {
+      "name": "Z.ai",
+      "staticModels": [
+        {
+          "name": "glm-4.6",
+          "label": "GLM-4.6 (200K)",
+          "provider": "Z.ai",
+          "maxTokenAllowed": 200000,
+          "maxCompletionTokens": 65536
+        },
+        {
+          "name": "glm-4.5",
+          "label": "GLM-4.5 (128K)",
+          "provider": "Z.ai",
+          "maxTokenAllowed": 128000,
+          "maxCompletionTokens": 65536
+        },
+        {
+          "name": "glm-4.5-flash",
+          "label": "GLM-4.5 Flash (128K)",
+          "provider": "Z.ai",
+          "maxTokenAllowed": 128000,
+          "maxCompletionTokens": 65536
+        }
+      ],
+      "getApiKeyLink": "https://open.bigmodel.cn/usercenter/apikeys",
+      "labelForGetApiKey": null,
+      "icon": null,
+      "config": {
+        "baseUrlKey": "ZAI_BASE_URL",
+        "apiTokenKey": "ZAI_API_KEY",
+        "baseUrl": "https://api.z.ai/api/coding/paas/v4"
+      },
+      "hasDynamicModels": true
+    }
+  ]
+}

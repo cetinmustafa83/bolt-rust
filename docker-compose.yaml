@@ -1,0 +1,59 @@
+# bolt.diy — Rust backend deployment.
+#
+# The image contains only the Rust `bolt-server` binary and the static SPA
+# bundle (build/client) — no Node runtime, no Cloudflare workerd, no SSR.
+#
+#   docker compose --profile production up -d --build
+#
+# Provider API keys are optional and are passed through to the runtime where
+# /api/check-env-key and /api/configured-providers read them. CodeGPT itself
+# uses browser-side OAuth device-flow login, so it needs no static key here.
+
+services:
+  app:
+    image: bolt-ai:production
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: bolt-ai-production
+      args:
+        # Vite bakes these into the client bundle at build time.
+        - VITE_LOG_LEVEL=${VITE_LOG_LEVEL:-debug}
+        - VITE_PUBLIC_APP_URL=${VITE_PUBLIC_APP_URL}
+        - DEFAULT_NUM_CTX=${DEFAULT_NUM_CTX:-32768}
+    ports:
+      - '5173:5173'
+    environment:
+      - PORT=5173
+      - HOST=0.0.0.0
+      - RUST_LOG=${RUST_LOG:-bolt_server=info,tower_http=warn}
+      - DEFAULT_NUM_CTX=${DEFAULT_NUM_CTX:-32768}
+      - RUNNING_IN_DOCKER=true
+      # --- provider keys (all optional; checked by /api/check-env-key) ---
+      - GROQ_API_KEY=${GROQ_API_KEY}
+      - HuggingFace_API_KEY=${HuggingFace_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPEN_ROUTER_API_KEY=${OPEN_ROUTER_API_KEY}
+      - GOOGLE_GENERATIVE_AI_API_KEY=${GOOGLE_GENERATIVE_AI_API_KEY}
+      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY}
+      - MISTRAL_API_KEY=${MISTRAL_API_KEY}
+      - COHERE_API_KEY=${COHERE_API_KEY}
+      - XAI_API_KEY=${XAI_API_KEY}
+      - PERPLEXITY_API_KEY=${PERPLEXITY_API_KEY}
+      - CEREBRAS_API_KEY=${CEREBRAS_API_KEY}
+      - FIREWORKS_API_KEY=${FIREWORKS_API_KEY}
+      - TOGETHER_API_KEY=${TOGETHER_API_KEY}
+      - TOGETHER_API_BASE_URL=${TOGETHER_API_BASE_URL}
+      - AWS_BEDROCK_CONFIG=${AWS_BEDROCK_CONFIG}
+      # --- local / self-hosted providers ---
+      - OLLAMA_API_BASE_URL=${OLLAMA_API_BASE_URL}
+      - LMSTUDIO_API_BASE_URL=${LMSTUDIO_API_BASE_URL}
+    env_file:
+      - path: '.env'
+        required: false
+      - path: '.env.local'
+        required: false
+    extra_hosts:
+      # lets the container reach Ollama/LMStudio running on the docker host
+      - 'host.docker.internal:host-gateway'
+    restart: unless-stopped
