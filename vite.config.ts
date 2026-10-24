@@ -30,8 +30,23 @@ export default defineConfig((config) => {
     },
     // Sandbox: app is reached through a reverse proxy (Next.js gateway), so
     // allow any Host header on both dev and preview servers.
+    //
+    // `pnpm dev` (scripts/dev-all.mjs) runs the Rust bolt-server on
+    // DEV_RUST_PORT (default 5175) next to this dev server; /api/* and
+    // /webcontainer/* are proxied there so the browser sees exactly the
+    // production API surface (models, llm-relay, CodeGPT login channel…).
+    // COOP/COEP headers mirror the Rust middleware so the WebContainer/
+    // SharedArrayBuffer path behaves like production during development.
     server: {
       allowedHosts: true,
+      proxy: {
+        '/api': { target: `http://127.0.0.1:${process.env.DEV_RUST_PORT ?? 5175}` },
+        '/webcontainer': { target: `http://127.0.0.1:${process.env.DEV_RUST_PORT ?? 5175}` },
+      },
+      headers: {
+        'Cross-Origin-Opener-Policy': 'same-origin',
+        'Cross-Origin-Embedder-Policy': 'credentialless',
+      },
     },
     preview: {
       allowedHosts: true,

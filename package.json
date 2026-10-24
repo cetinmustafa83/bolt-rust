@@ -12,7 +12,9 @@
   },
   "scripts": {
     "build": "react-router build",
-    "dev": "node pre-start.cjs  && react-router dev --host ::",
+    "dev": "node scripts/dev-all.mjs",
+    "dev:ui": "node pre-start.cjs && react-router dev --host ::",
+    "backend:build": "cd backend-rs && cargo build --release",
     "test": "vitest --run",
     "test:watch": "vitest",
     "test:unit": "vitest --run tests/unit",

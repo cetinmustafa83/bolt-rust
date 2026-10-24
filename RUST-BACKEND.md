@@ -29,6 +29,23 @@ it with `npx tsx scripts/dump-provider-catalog.ts` and rebuild the Rust binary.
 ## Build & run (local)
 
 ```bash
+pnpm install                     # frontend deps (Node side)
+pnpm dev                         # builds Rust backend, then runs BOTH:
+                                 #   bolt-server  → http://127.0.0.1:5175
+                                 #   vite dev     → http://localhost:5173
+                                 #   (vite proxies /api/* + /webcontainer/*
+                                 #    to the Rust server; COOP/COEP headers
+                                 #    mirror production)
+```
+
+`pnpm dev` requirements: Rust on PATH (`rustup`). Without cargo it degrades
+to UI-only dev (`[dev] cargo not found…`); without Node it won't start at all.
+Ports are overridable: `DEV_UI_PORT=5183 DEV_RUST_PORT=5176 pnpm dev`.
+`SKIP_RUST_BUILD=1 pnpm dev` skips the cargo step (uses the existing binary).
+
+Production (what `pnpm start` / Docker run):
+
+```bash
 pnpm install                     # frontend deps
 pnpm run build                   # SPA -> build/client
 
@@ -43,6 +60,9 @@ pnpm start                       # runs ./backend-rs/target/release/bolt-server
 Then open `http://localhost:5173`. Add your provider API key(s) in the UI
 (key icon) or via env vars — or just **Sign in with CodeGPT** (the amber pill
 above the chat box) and start building.
+
+Other scripts: `pnpm dev:ui` (Vite only — API falls back to browser-side
+implementations), `pnpm backend:build` (cargo build only).
 
 ## Docker
 
